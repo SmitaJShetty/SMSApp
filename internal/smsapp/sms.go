@@ -15,11 +15,9 @@ type SMSGenerator struct {
 
 // SendSMS sends sms
 func (s *SMSGenerator) SendSMS(req *model.SMSRequest) error {
-	// call api to send sms
-	//get config to generate key
 	url := "https://api.transmitsms.com/send-sms.json"
-	apiKey := "36b4cb6122e1787a026f331fd3fe66cd"
-	apiSecret := "Ubuntu123"
+	apiKey := "abc"
+	apiSecret := "abc"
 
 	reqBody, reqBodyErr := s.getRequestBody(req)
 	if reqBodyErr != nil {
