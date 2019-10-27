@@ -1,7 +1,7 @@
 
 export interface Message {
     to: string,
-    from: string,
+    format: string,
     message: string,
 }
 
@@ -24,6 +24,6 @@ export interface DeliveryStatsResponse {
 }
 
 export interface ErrorResponse {
-    Code: string,
-    Description: string
+    Message: string,
+    StatusCode: string
 }
