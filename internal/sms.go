@@ -3,7 +3,6 @@ package internal
 import (
 	"SMSApp/internal/model"
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -21,7 +20,6 @@ func NewSMSGenerator() *SMSGenerator {
 
 // SendSMS sends sms
 func (s *SMSGenerator) SendSMS(msg *model.SMSRequest) (*model.APIResponse, error) {
-	log.Println("1")
 	reqBodyErr := s.validateRequest(msg)
 	if reqBodyErr != nil {
 		return nil, reqBodyErr

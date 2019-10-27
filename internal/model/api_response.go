@@ -8,7 +8,7 @@ type APIResponse struct {
 	Cost           float32        `json:"cost"`
 	SMS            int            `json:"sms"`
 	DelStats       *DeliveryStats `json:"delivery_stats"`
-	Error          *ResponseErr   `json:"error"`
+	Error          *ErrorCode     `json:"error"`
 }
 
 // DeliveryStats construct for delivery stats
@@ -20,8 +20,26 @@ type DeliveryStats struct {
 	OptOuts   int `json:"optouts"`
 }
 
-// ResponseErr construct for api error respnose
-type ResponseErr struct {
+// ErrorCode construct for api error respnose
+type ErrorCode struct {
 	Code        string `json:"code"`
 	Description string `json:"description"`
+}
+
+//ResponseErr construct for api error
+type ResponseErr struct {
+	Error *ErrorDetails `json:"error"`
+}
+
+//ErrorDetails construct for api error
+type ErrorDetails struct {
+	Code        string            `json:"code"`
+	Description *ErrorDescription `json:"description"`
+}
+
+// ErrorDescription constrcut for error description
+type ErrorDescription struct {
+	Fails   []int32  `json:"fails"`
+	OptOuts []string `json:"optouts"`
+	Reason  string   `json:"reason"`
 }

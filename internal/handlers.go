@@ -37,7 +37,7 @@ func SendMessageHandler(w http.ResponseWriter, req *http.Request) {
 		common.SendErrorResponse(w, req, common.NewAppError(sendErr.Error(), http.StatusInternalServerError))
 		return
 	}
-	log.Println("2")
+
 	respBody, respErr := json.Marshal(resp)
 	if respErr != nil {
 		log.Printf("Error while sending sms message: %v", respErr)

@@ -1,4 +1,4 @@
-.PHONEY: build 
+
 bld: 
 		cd cmd/ && go build -o ../build/smssvc 
 
@@ -13,3 +13,12 @@ clean: ## Remove all the temporary and build files
 
 run: bld
 	build/smssvc
+
+npm-run: 
+	cd web/app/sms-app
+	npm run start
+
+npm-plint:
+	cd web/app/sms-app
+	npm run prettier && npm run lint
+
