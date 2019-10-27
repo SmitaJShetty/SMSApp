@@ -2,11 +2,10 @@ package internal
 
 import (
 	"SMSApp/internal/model"
-	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
-	"strings"
 )
 
 //NewBurstSMSProvider returns a burstsms provider
@@ -23,31 +22,26 @@ type BurstSMSProvider struct {
 
 //SendSMS sends sms
 func (b *BurstSMSProvider) SendSMS(msg *model.SMSRequest) (*model.APIResponse, error) {
-	reqBody, reqBodyErr := b.getRequestBody(msg)
-	if reqBodyErr != nil {
-		return nil, reqBodyErr
-	}
-
 	validateErr := b.validateCreds()
 	if validateErr != nil {
 		return nil, fmt.Errorf("SendSMS: creds not set")
 	}
 
-	newReq, reqErr := http.NewRequest("GET", b.creds.APIURL, bytes.NewBuffer(reqBody))
+	newReq, reqErr := http.NewRequest("GET", b.creds.APIURL, nil)
 	if reqErr != nil {
 		return nil, reqErr
 	}
+	q := newReq.URL.Query()
 
-	newReq.URL.Query().Add("message", msg.Message)
-	newReq.URL.Query().Add("format", msg.Format)
-	newReq.URL.Query().Add("to", msg.To)
+	q.Add("message", msg.Message)
+	q.Add("format", msg.Format)
+	q.Add("to", msg.To)
+	newReq.URL.RawQuery = q.Encode()
 
-	apiKey := b.creds.APIKey
-	apiURL := b.creds.APIURL
-	apiSecret := b.creds.APISecret
-
-	newReq.SetBasicAuth(apiKey, apiSecret)
+	log.Println("query:", newReq.URL.RawQuery)
+	newReq.SetBasicAuth(b.creds.APIKey, b.creds.APISecret)
 	newReq.Header.Set("Accept", "application/json")
+
 	c := &http.Client{}
 	resp, respErr := c.Do(newReq)
 	if respErr != nil {
@@ -55,9 +49,15 @@ func (b *BurstSMSProvider) SendSMS(msg *model.SMSRequest) (*model.APIResponse, e
 	}
 
 	if resp == nil {
-		return nil, fmt.Errorf("SendSMS: response was empty")
+		return nil, fmt.Errorf(" SendSMS: response was empty")
 	}
 
+	// resArr, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	//log.Println(string(resArr))
 	apiResponse, apiErr := b.getResponse(resp)
 	if apiErr != nil {
 		return nil, apiErr
@@ -67,11 +67,11 @@ func (b *BurstSMSProvider) SendSMS(msg *model.SMSRequest) (*model.APIResponse, e
 		return apiResponse, nil
 	}
 
+	log.Fatalf("status not ok: %v", resp.StatusCode)
 	if apiResponse == nil || apiResponse.DelStats == nil {
 		return nil, fmt.Errorf("empty api response")
 	}
-
-	return nil, fmt.Errorf("api responded with error: %v", apiResponse.DelStats.Error)
+	return nil, fmt.Errorf("api responded with error: %v", apiResponse.Error)
 }
 
 func (b *BurstSMSProvider) getResponse(resp *http.Response) (*model.APIResponse, error) {
@@ -84,7 +84,7 @@ func (b *BurstSMSProvider) getResponse(resp *http.Response) (*model.APIResponse,
 	if apiRespErr != nil {
 		return nil, fmt.Errorf("error %v occurred during unmarshall of response", apiRespErr)
 	}
-
+	log.Println("api response: ", apiResponse)
 	return &apiResponse, nil
 }
 
@@ -98,32 +98,4 @@ func (b *BurstSMSProvider) validateCreds() error {
 	}
 
 	return nil
-}
-
-func (b *BurstSMSProvider) validateRequest(req *model.SMSRequest) error {
-	if req == nil {
-		return fmt.Errorf("empty request")
-	}
-
-	if strings.Trim(req.Format, " ") == "" {
-		req.Format = "json"
-	}
-
-	if strings.Trim(req.To, " ") == "" && strings.Trim(req.List, " ") == "" {
-		return fmt.Errorf("To field and List field cannot be both empty")
-	}
-
-	if strings.Trim(req.Message, " ") == "" {
-		return fmt.Errorf("message cannot be empty")
-	}
-
-	return nil
-}
-
-func (b *BurstSMSProvider) getRequestBody(req *model.SMSRequest) ([]byte, error) {
-	r, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
-	}
-	return r, nil
 }

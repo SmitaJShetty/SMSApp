@@ -2,9 +2,8 @@ package internal
 
 import (
 	"SMSApp/internal/model"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -13,30 +12,27 @@ type SMSGenerator struct {
 	MesgProvider MessagingProvider
 }
 
+//NewSMSGenerator creates SMSGenerator
+func NewSMSGenerator() *SMSGenerator {
+	return &SMSGenerator{
+		MesgProvider: NewMessagingProvider(),
+	}
+}
+
 // SendSMS sends sms
-func (s *SMSGenerator) SendSMS(req *model.SMSRequest) error {
-	validateErr := req.validateRequest()
-	if validateErr != nil {
-		return validateErr
+func (s *SMSGenerator) SendSMS(msg *model.SMSRequest) (*model.APIResponse, error) {
+	log.Println("1")
+	reqBodyErr := s.validateRequest(msg)
+	if reqBodyErr != nil {
+		return nil, reqBodyErr
 	}
 
-	sendErr := s.MesgProvider.SendSMS(req)
-	fmt.Println("resp.status:", resp.StatusCode, ", body:")
-	return nil
-}
-
-func (s *SMSGenerator) getBase64EncodedKeySecret(key string, value string) string {
-	toEncodeStr := fmt.Sprintf("%s:%s", key, value)
-	encodeStr := base64.StdEncoding.EncodeToString([]byte(toEncodeStr))
-	return fmt.Sprintf("Basic %s", encodeStr)
-}
-
-func (s *SMSGenerator) getRequestBody(req *model.SMSRequest) ([]byte, error) {
-	r, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
+	resp, sendErr := s.MesgProvider.SendSMS(msg)
+	if sendErr != nil {
+		return nil, fmt.Errorf("error while sending sms, error:%v", sendErr)
 	}
-	return r, nil
+
+	return resp, nil
 }
 
 func (s *SMSGenerator) validateRequest(req *model.SMSRequest) error {
@@ -48,7 +44,7 @@ func (s *SMSGenerator) validateRequest(req *model.SMSRequest) error {
 		req.Format = "json"
 	}
 
-	if strings.Trim(req.To, " ") == "" && strings.Trim(req.List, " ") {
+	if strings.Trim(req.To, " ") == "" && strings.Trim(req.List, " ") == "" {
 		return fmt.Errorf("To field and List field cannot be both empty")
 	}
 

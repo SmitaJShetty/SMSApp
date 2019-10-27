@@ -2,20 +2,16 @@ package internal
 
 import (
 	"SMSApp/internal/model"
-	"SMSApp/pkg/errorcode"
+	"SMSApp/pkg/common"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
-// GetRouter returns a router
-func GetRouter() *mux.Router {
-	router := mux.NewRouter()
-	router.HandleFunc("/send", SendMessageHandler).Methods("POST").Schemes("http").Host("127.0.0.1:8080")
-	return router
+//PingHandler handler for pong
+func PingHandler(w http.ResponseWriter, req *http.Request) {
+	common.SendResult(w, req, []byte("Pong"))
 }
 
 // SendMessageHandler handles requests for sending sms
@@ -30,14 +26,24 @@ func SendMessageHandler(w http.ResponseWriter, req *http.Request) {
 	decodeErr := json.NewDecoder(req.Body).Decode(&msgReq)
 	if decodeErr != nil {
 		log.Printf("Error while decoding message: %v", decodeErr)
-		http.Error(w, decodeErr.Error(), int(errorcode.Internal))
+		common.SendErrorResponse(w, req, common.NewAppError(decodeErr.Error(), http.StatusInternalServerError))
+		return
 	}
 
-	fmt.Println("mesgReq:", msgReq)
-	generator := NewMessagingProvider()
-	sendErr := smsGen.SendSMS(&msgReq)
+	smsGen := NewSMSGenerator()
+	resp, sendErr := smsGen.SendSMS(&msgReq)
 	if sendErr != nil {
 		log.Printf("Error while sending sms message: %v", sendErr)
-		http.Error(w, sendErr.Error(), int(errorcode.Internal))
+		common.SendErrorResponse(w, req, common.NewAppError(sendErr.Error(), http.StatusInternalServerError))
+		return
 	}
+	log.Println("2")
+	respBody, respErr := json.Marshal(resp)
+	if respErr != nil {
+		log.Printf("Error while sending sms message: %v", respErr)
+		common.SendErrorResponse(w, req, common.NewAppError(respErr.Error(), http.StatusInternalServerError))
+		return
+	}
+
+	common.SendResult(w, req, respBody)
 }
