@@ -43,7 +43,7 @@ This will download dependencies, build and start app
 The application takes a single mobile number and text message. On click of send, it will send an sms. 
 Most data validations are provided on the front end and backend. 
 
-Whats not done and could be done with more time: 
+What could be done with more time: 
 1. Tests
 2. More logging
 3. Containerization if required
