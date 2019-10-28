@@ -5,6 +5,7 @@ import 'antd/dist/antd.css';
 import '../sms/send-message.css';
 import { SendSMS } from './send-message-action'
 import {Message, APIResponse, ErrorResponse} from './send-message' ;
+import { isPhoneNumber, isValidSMSLength } from './send-message-functions';
 
 interface SendMessageState{
     To: string
@@ -32,9 +33,6 @@ export default class SendMessage extends React.Component<{}, SendMessageState>{
         }
 
         if (!this.validateMessage(msg)){
-            this.setState({
-                Error: 'Error: please enter valid message and to'
-            });
             return ;
         }
 
@@ -44,28 +42,44 @@ export default class SendMessage extends React.Component<{}, SendMessageState>{
             this.setState({Sent: true, Error:''});
         })
         .catch((error:ErrorResponse)=>{
-            console.log('error received:', error);
             if (error){
                 this.setState({
                     Error: error.Message
                 });
-            }    else {
-                this.setState({
-                    Error: 'error occurred',
-                });
-            }        
+            }                    
         })
     }
 
+
     validateMessage = (message:Message):Boolean => {
         if (message.to.trim()===""){
+            this.setState({
+                Error: 'a phone number is required',
+            });
+            return false;
+        }
+
+        if (!isPhoneNumber(message.to.trim())){
+            this.setState({
+                Error: 'please enter a valid phone number',
+            });
+            return false;
+        }
+
+        if (!isValidSMSLength(message.message)){
+            this.setState({
+                Error: 'length of sms cannot exceed 160 characters',
+            });
             return false;
         }
 
         if (message.message.trim() === ""){
-            return false
+            this.setState({
+                Error: 'message cannot be empty',
+            });
+            return false;
         }
-        return true
+        return true;
     }
 
     updateMessage(event:any){

@@ -15,8 +15,7 @@ run: bld
 	build/smssvc
 
 npm-run: 
-	cd web/app/sms-app
-	npm run start
+	cd ./web/app/sms-app && npm run start
 
 npm-plint:
 	cd web/app/sms-app

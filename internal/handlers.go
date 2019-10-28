@@ -4,7 +4,6 @@ import (
 	"SMSApp/internal/model"
 	"SMSApp/pkg/common"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -16,7 +15,6 @@ func PingHandler(w http.ResponseWriter, req *http.Request) {
 
 // SendMessageHandler handles requests for sending sms
 func SendMessageHandler(w http.ResponseWriter, req *http.Request) {
-	fmt.Printf("req:%v \n", req.URL)
 	if req.Body == nil {
 		log.Printf("request body was empty")
 		return

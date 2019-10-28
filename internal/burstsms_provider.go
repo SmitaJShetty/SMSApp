@@ -69,8 +69,7 @@ func (b *BurstSMSProvider) getResponse(resp *http.Response) (*model.APIResponse,
 		return &apiResponse, nil
 	}
 
-	// I am not able to parse the error message because burst sms api returns a different error object for different 400 http errors
-	return nil, fmt.Errorf("Error while fetching api response; burst sms api returned an error ")
+	return nil, fmt.Errorf("Error while fetching api response; burst sms api returned an error, statuscode:%v", resp.StatusCode)
 }
 
 func (b *BurstSMSProvider) validateCreds() error {
