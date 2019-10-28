@@ -10,6 +10,7 @@ Source code location: SMSApp/internal
 Build location: SMSApp/internal
 
 Execute instructions:
+
 Credentials are passed via environment variables into the application. 
 If containerized, these need to be passed into the container as arguments or via a secret provider such as Hashicorp Vault. 
 
@@ -30,6 +31,7 @@ b) Frontend component
 Source code location: SMSApp/web/app
 
 Execute instructions:
+
 In order to invoke front end, cd to SMSApp folder (location of makefile).
 ```
     make npm-run
