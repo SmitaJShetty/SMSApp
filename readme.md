@@ -14,8 +14,8 @@ If containerized, these need to be passed into the container as arguments or via
 For this app, APIURL, APIKEY, APISECRET are passed as environment variables.
 To invoke backend service: on command prompt, cd to SMSApp folder (location of Makefile).
 ``` 
-    export APIKEY=_ <APIKEY> _
-    export APISECRET=_ <APISECRET> _   
+    export APIKEY=_<APIKEY>_
+    export APISECRET=_<APISECRET>_   
     export APIURL=https://api.transmitsms.com/send-sms.json
 
     make run 
