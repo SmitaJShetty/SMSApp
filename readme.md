@@ -1,4 +1,4 @@
-** Application that sends SMS **
+__ Application that sends SMS __
 
 Components: 
 a) Backend component 
@@ -40,5 +40,5 @@ Most data validations are provided on the front end and backend.
 
 Whats not done and could be done with more time: 
 1. Tests
-2. ore logging
+2. More logging
 3. Containerization if required
