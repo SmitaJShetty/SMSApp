@@ -1,6 +1,7 @@
 __ Application that sends SMS __
 
 Components: 
+
 a) Backend component 
 
 Source code location: SMSApp/internal
