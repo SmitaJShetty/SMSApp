@@ -15,9 +15,10 @@ run: bld
 	build/smssvc
 
 npm-run: 
+	cd ./web/app/sms-app && npm install
 	cd ./web/app/sms-app && npm run start
 
 npm-plint:
-	cd web/app/sms-app
-	npm run prettier && npm run lint
+	#Prettier installation has some issues locally
+	cd web/app/sms-app && npm run prettier && npm run lint
 
