@@ -100,21 +100,21 @@ export default class SendMessage extends React.Component<{}, SendMessageState>{
         return (
             
             <Card title="Send SMS" style={{ width: 500, textAlign: "left"}} >
-                <Row  gutter={16} >
+                <Row  style={{padding:10}} >
                     <Col span={6} >To:</Col>
-                    <Col span={18} > <input type="text" value={this.state.To} onChange={this.updateTo.bind(this)}/></Col>
+                    <Col span={18} > <input type="text" width={400} value={this.state.To} onChange={this.updateTo.bind(this)}/></Col>
                 </Row>
-                <Row >
+                <Row style={{padding:10}}>
                    <Col span={6} >Message: </Col> 
-                   <Col span={6} ><input value={this.state.Message} multiple={true}  onChange={this.updateMessage.bind(this)}/></Col>
+                   <Col span={6} ><textarea value={this.state.Message} rows={5} cols={40} onChange={this.updateMessage.bind(this)}/></Col>
                 </Row>
                 <Row>
-                    <Button onClick={()=>{ this.sendSMS()}} >Send
-                    <Icon type="message"></Icon></Button>     
+                    <Button onClick={()=>{ this.sendSMS()}} >Send 
+                    <Icon type="message" style={{padding:5}}></Icon></Button>     
                 </Row>
-                <Row>
+                <Row style={{padding:2, textAlign:"right"}}>
                     <div>
-                        <span id="error" >{this.state.Error}</span>
+                        <span id="error" style={{color:'#de6b35', padding:10, border:2}} >{this.state.Error}</span>
                     </div>
                 </Row>
             </Card>                       
